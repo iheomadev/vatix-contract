@@ -5,7 +5,38 @@ import { DepositForm } from "./DepositForm";
 import { WithdrawForm } from "./WithdrawForm";
 import { LoadingSkeleton } from "./LoadingSkeleton";
 
-export function PositionPanel() {
+/**
+ * Props for the {@link PositionPanel} component.
+ *
+ * @example
+ * ```tsx
+ * // Render the panel with a custom loading delay (ms).
+ * <PositionPanel loadingDelayMs={800} />
+ * ```
+ */
+export interface PositionPanelProps {
+  /**
+   * How long (in milliseconds) to show the loading skeleton before revealing
+   * the positions list. Defaults to `1500`.
+   */
+  loadingDelayMs?: number;
+}
+
+/**
+ * Displays the user's open positions together with deposit and withdraw forms.
+ *
+ * While positions are loading a {@link LoadingSkeleton} is shown. Once loaded,
+ * an empty-state message is rendered when the user has no open positions.
+ *
+ * @param props - See {@link PositionPanelProps}.
+ *
+ * @example
+ * ```tsx
+ * <PositionPanel />
+ * <PositionPanel loadingDelayMs={500} />
+ * ```
+ */
+export function PositionPanel({ loadingDelayMs = 1500 }: PositionPanelProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [positions, setPositions] = useState<any[]>([]);
 
@@ -13,10 +44,10 @@ export function PositionPanel() {
     const timer = setTimeout(() => {
       setIsLoading(false);
       setPositions([]);
-    }, 1500);
+    }, loadingDelayMs);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [loadingDelayMs]);
 
   return (
     <div className="space-y-6">
