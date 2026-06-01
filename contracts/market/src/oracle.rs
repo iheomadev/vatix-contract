@@ -1,3 +1,26 @@
+//! Oracle module for market resolution.
+//!
+//! Provides helpers for constructing and verifying the Ed25519 signatures that
+//! authorised oracles submit when resolving a prediction-market outcome.
+//!
+//! # Flow
+//! 1. Off-chain oracle calls [`construct_oracle_message`] to build the canonical
+//!    32-byte message digest for a given `(market_id, outcome)` pair.
+//! 2. Oracle signs the digest with its Ed25519 private key and submits the
+//!    64-byte signature on-chain.
+//! 3. The contract calls [`verify_oracle_signature`] to confirm the signature is
+//!    valid and [`validate_oracle_authorization`] to confirm the signer is the
+//!    oracle registered for that market.
+//!
+//! # Example
+//! ```ignore
+//! // Build the message the oracle must sign for market 42, outcome YES.
+//! let msg = construct_oracle_message(&env, 42u32, true);
+//!
+//! // Verify a submitted signature (panics on invalid sig — see TODO in source).
+//! verify_oracle_signature(&env, 42u32, true, &signature, &oracle_pubkey)?;
+//! ```
+
 use crate::error::ContractError;
 use crate::types::Market;
 use soroban_sdk::{Bytes, BytesN, Env};
